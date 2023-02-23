@@ -19,7 +19,10 @@ public class ProductVariantRepository : RepositoryBase<ProductVariant>, IProduct
         ProductVariantParameters productVariantParameters, bool trackChanges)
     {
         var productVariants = FindByCondition(p => p.ProductId.Equals(productId), trackChanges)
-            .Sort(productVariantParameters.OrderBy);
+            .FilterPrice(productVariantParameters.MinPrice, productVariantParameters.MaxPrice, productVariantParameters.ValidPriceRange)
+            .Sort(productVariantParameters.OrderBy)
+            .Include(p => p.Product)
+            .Include(p => p.Pictures);
 
         return await PagedList<ProductVariant>
             .ToPagedList(productVariants, productVariantParameters.PageIndex, productVariantParameters.PageSize);
@@ -28,6 +31,13 @@ public class ProductVariantRepository : RepositoryBase<ProductVariant>, IProduct
     public async Task<ProductVariant?> GetProductVariantAsync(int productId, int productVariantId, bool trackChanges)
     {
         return await FindByCondition(p => p.ProductId.Equals(productId) && p.Id.Equals(productVariantId), trackChanges)
+            .Include(p => p.Product)
+            .Include(p => p.Pictures)
             .SingleOrDefaultAsync();
+    }
+
+    public async Task CreateProductVariantAsync(ProductVariant productVariant)
+    {
+        await CreateAsync(productVariant);
     }
 }

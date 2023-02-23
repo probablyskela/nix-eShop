@@ -1,6 +1,6 @@
 ﻿namespace Shared.Data.Dtos.ProductDtos;
 
-public class ProductDto
+public record ProductDto
 {
     public int Id { get; set; }
     public string Name { get; set; } = null!;
@@ -9,4 +9,5 @@ public class ProductDto
     public int AvailableStock { get; set; }
     public int PictureId { get; set; }
     public int CategoryId { get; set; }
+    public IEnumerable<int> ConsumerIds { get; set; } = null!;
 }

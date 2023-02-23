@@ -20,7 +20,11 @@ public class ProductRepository : RepositoryBase<Product>, IProductRepository
         var products = FindAll(trackChanges)
             .Search(productParameters.SearchTerm)
             .FilterConsumers(productParameters.Consumers)
-            .Sort(productParameters.OrderBy);
+            .Sort(productParameters.OrderBy)
+            .Include(p => p.Category)
+            .Include(p => p.Consumers)
+            .Include(p => p.Picture)
+            .Include(p => p.ProductVariants);
 
         return await PagedList<Product>
             .ToPagedList(products, productParameters.PageIndex, productParameters.PageSize);
@@ -29,6 +33,15 @@ public class ProductRepository : RepositoryBase<Product>, IProductRepository
     public async Task<Product?> GetProductAsync(int productId, bool trackChanges)
     {
         return await FindByCondition(p => p.Id.Equals(productId), trackChanges)
+            .Include(p => p.Category)
+            .Include(p => p.Consumers)
+            .Include(p => p.Picture)
+            .Include(p => p.ProductVariants)
             .SingleOrDefaultAsync();
+    }
+
+    public async Task CreateProductAsync(Product product)
+    {
+        await CreateAsync(product);
     }
 }

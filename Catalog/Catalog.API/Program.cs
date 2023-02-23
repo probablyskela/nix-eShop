@@ -3,6 +3,8 @@ using Catalog.API.Repository;
 using Catalog.API.Repository.Abstractions;
 using Catalog.API.Service;
 using Catalog.API.Service.Abstractions;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
+using Microsoft.EntityFrameworkCore;
 
 var configuration = GetConfiguration();
 var builder = WebApplication.CreateBuilder(args);
@@ -19,7 +21,13 @@ builder.Services.ConfigureServices();
 
 builder.Services.AddScoped<IRepositoryManager, RepositoryManager>();
 builder.Services.AddScoped<IServiceManager, ServiceManager>();
+builder.Services.AddScoped<DbContext, RepositoryContext>();
 builder.Services.AddAutoMapper(typeof(Program));
+
+builder.Services.AddControllers(options =>
+{
+    options.ModelMetadataDetailsProviders.Add(new SystemTextJsonValidationMetadataProvider());
+});
 
 var app = builder.Build();
 
@@ -63,6 +71,7 @@ async void CreateDbIfNotExists(IHost host)
     {
         var context = services.GetRequiredService<RepositoryContext>();
 
+        // await context.Database.EnsureDeletedAsync();
         await context.Database.EnsureCreatedAsync();
     }
     catch (Exception ex)

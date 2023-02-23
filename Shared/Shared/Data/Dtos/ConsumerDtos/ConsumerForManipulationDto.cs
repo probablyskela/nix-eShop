@@ -2,7 +2,7 @@
 
 namespace Shared.Data.Dtos.ConsumerDtos;
 
-public class ConsumerForManipulationDto
+public record ConsumerForManipulationDto
 {
     [Required(ErrorMessage = "Name is a required field.")]
     [MaxLength(100, ErrorMessage = "Maximum length for the Name is 100 characters.")]

@@ -1,6 +1,6 @@
 ﻿namespace Shared.Data.Dtos.PictureDtos;
 
-public class PictureDto
+public record PictureDto
 {
     public int Id { get; set; }
     public string PictureFileName { get; set; } = null!;

@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Catalog.API.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20230222143019_InitialCreate")]
+    [Migration("20230223125505_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -52,6 +52,21 @@ namespace Catalog.API.Migrations
                     b.HasIndex("ProductsId");
 
                     b.ToTable("CatalogConsumerCatalogProduct", (string)null);
+                });
+
+            modelBuilder.Entity("PictureProductVariant", b =>
+                {
+                    b.Property<int>("PicturesId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProductVariantsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("PicturesId", "ProductVariantsId");
+
+                    b.HasIndex("ProductVariantsId");
+
+                    b.ToTable("CatalogProductVariantCatalogPicture", (string)null);
                 });
 
             modelBuilder.Entity("Shared.Data.Entities.Category", b =>
@@ -181,6 +196,21 @@ namespace Catalog.API.Migrations
                     b.HasOne("Shared.Data.Entities.Product", null)
                         .WithMany()
                         .HasForeignKey("ProductsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PictureProductVariant", b =>
+                {
+                    b.HasOne("Shared.Data.Entities.Picture", null)
+                        .WithMany()
+                        .HasForeignKey("PicturesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Shared.Data.Entities.ProductVariant", null)
+                        .WithMany()
+                        .HasForeignKey("ProductVariantsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

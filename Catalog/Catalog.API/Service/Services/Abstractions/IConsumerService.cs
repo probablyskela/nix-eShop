@@ -10,4 +10,5 @@ public interface IConsumerService
         ConsumerParameters consumerParameters, bool trackChanges);
 
     Task<ConsumerDto> GetConsumerAsync(int consumerId, bool trackChanges);
+    Task<ConsumerDto> CreateConsumerAsync(ConsumerForCreationDto consumerForCreation);
 }

@@ -7,6 +7,6 @@ namespace Catalog.API.Repository.Repositories.Abstractions;
 public interface IConsumerRepository
 {
     Task<PagedList<Consumer>> GetConsumersAsync(ConsumerParameters consumerParameters, bool trackChanges);
-    
     Task<Consumer?> GetConsumerAsync(int consumerId, bool trackChanges);
+    Task CreateConsumerAsync(Consumer consumer);
 }

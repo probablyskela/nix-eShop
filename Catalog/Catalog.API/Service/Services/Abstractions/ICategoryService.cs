@@ -10,4 +10,5 @@ public interface ICategoryService
         CategoryParameters productParameters, bool trackChanges);
     
     Task<CategoryDto> GetCategoryAsync(int categoryId, bool trackChanges);
+    Task<CategoryDto> CreateCategoryAsync(CategoryForCreationDto categoryForCreation);
 }

@@ -32,6 +32,6 @@ public class ProductEntityConfiguration : IEntityTypeConfiguration<Product>
         
         builder.HasMany(c => c.Consumers)
             .WithMany(c => c.Products)
-            .UsingEntity(e => e.ToTable("CatalogConsumerCatalogProduct"));;
+            .UsingEntity(e => e.ToTable("CatalogConsumerCatalogProduct"));
     }
 }

@@ -27,5 +27,9 @@ public class ProductVariantEntityConfiguration : IEntityTypeConfiguration<Produc
         builder.HasOne(c => c.Product)
             .WithMany(c => c.ProductVariants)
             .HasForeignKey(c => c.ProductId);
+
+        builder.HasMany(c => c.Pictures)
+            .WithMany(c => c.ProductVariants)
+            .UsingEntity(e => e.ToTable("CatalogProductVariantCatalogPicture"));
     }
 }

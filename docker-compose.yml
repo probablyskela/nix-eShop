@@ -28,3 +28,10 @@ services:
       POSTGRES_PASSWORD: postgres
     ports:
       - 5433:5432
+  nginx:
+    image: nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./Proxy/gateway/nginx/conf.d:/etc/nginx/conf.d
+      - ./Proxy/assets:/var/www/assets

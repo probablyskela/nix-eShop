@@ -138,6 +138,30 @@ namespace Catalog.API.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "CatalogProductVariantCatalogPicture",
+                columns: table => new
+                {
+                    PicturesId = table.Column<int>(type: "integer", nullable: false),
+                    ProductVariantsId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CatalogProductVariantCatalogPicture", x => new { x.PicturesId, x.ProductVariantsId });
+                    table.ForeignKey(
+                        name: "FK_CatalogProductVariantCatalogPicture_CatalogPicture_Pictures~",
+                        column: x => x.PicturesId,
+                        principalTable: "CatalogPicture",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CatalogProductVariantCatalogPicture_CatalogProductVariant_P~",
+                        column: x => x.ProductVariantsId,
+                        principalTable: "CatalogProductVariant",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_CatalogConsumerCatalogProduct_ProductsId",
                 table: "CatalogConsumerCatalogProduct",
@@ -157,6 +181,11 @@ namespace Catalog.API.Migrations
                 name: "IX_CatalogProductVariant_ProductId",
                 table: "CatalogProductVariant",
                 column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CatalogProductVariantCatalogPicture_ProductVariantsId",
+                table: "CatalogProductVariantCatalogPicture",
+                column: "ProductVariantsId");
         }
 
         /// <inheritdoc />
@@ -166,10 +195,13 @@ namespace Catalog.API.Migrations
                 name: "CatalogConsumerCatalogProduct");
 
             migrationBuilder.DropTable(
-                name: "CatalogProductVariant");
+                name: "CatalogProductVariantCatalogPicture");
 
             migrationBuilder.DropTable(
                 name: "CatalogConsumer");
+
+            migrationBuilder.DropTable(
+                name: "CatalogProductVariant");
 
             migrationBuilder.DropTable(
                 name: "CatalogProduct");

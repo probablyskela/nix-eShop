@@ -32,7 +32,7 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T>
                 .Where(expression);
     }
 
-    public void Create(T entity) => RepositoryContext.Add(entity);
+    public async Task CreateAsync(T entity) => await RepositoryContext.AddAsync(entity);
 
     public void Update(T entity) => RepositoryContext.Update(entity);
 

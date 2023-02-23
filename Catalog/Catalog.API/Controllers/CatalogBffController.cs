@@ -1,5 +1,6 @@
 ﻿using Catalog.API.Service.Abstractions;
 using Microsoft.AspNetCore.Mvc;
+using Shared;
 using Shared.Data.Dtos.CategoryDto;
 using Shared.Data.Dtos.ConsumerDtos;
 using Shared.Data.Dtos.ProductDtos;
@@ -10,7 +11,7 @@ using Shared.Data.Responses;
 namespace Catalog.API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route(ComponentDefaults.DefaultRoute + "/[controller]")]
 public class CatalogBffController : ControllerBase
 {
     private readonly IServiceManager _service;

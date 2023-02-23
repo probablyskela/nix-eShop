@@ -1,6 +1,6 @@
 ﻿namespace Shared.Data.Dtos.ProductVariantDtos;
 
-public class ProductVariantDto
+public record ProductVariantDto
 {
     public int Id { get; set; }
     public string Label { get; set; } = null!;

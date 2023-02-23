@@ -15,7 +15,8 @@ public class CategoryService : ICategoryService
     private readonly ILogger<CategoryService> _logger;
     private readonly IMapper _mapper;
 
-    public CategoryService(IRepositoryManager repositoryManager, ILogger<CategoryService> logger, IMapper mapper)
+    public CategoryService(IRepositoryManager repositoryManager, ILogger<CategoryService> logger,
+        IMapper mapper)
     {
         _repository = repositoryManager;
         _logger = logger;
@@ -35,6 +36,18 @@ public class CategoryService : ICategoryService
     public async Task<CategoryDto> GetCategoryAsync(int categoryId, bool trackChanges)
     {
         var categoryEntity = await GetCategoryIfExistsAsync(categoryId, trackChanges);
+
+        var categoryDto = _mapper.Map<CategoryDto>(categoryEntity);
+
+        return categoryDto;
+    }
+
+    public async Task<CategoryDto> CreateCategoryAsync(CategoryForCreationDto categoryForCreation)
+    {
+        var categoryEntity = _mapper.Map<Category>(categoryForCreation);
+
+        await _repository.Category.CreateCategoryAsync(categoryEntity);
+        await _repository.SaveAsync();
 
         var categoryDto = _mapper.Map<CategoryDto>(categoryEntity);
 

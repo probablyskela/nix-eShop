@@ -16,7 +16,8 @@ public class ProductVariantService : IProductVariantService
     private readonly IMapper _mapper;
 
     public ProductVariantService(IRepositoryManager repositoryManager,
-        ILogger<ProductVariantService> logger, IMapper mapper)
+        ILogger<ProductVariantService> logger,
+        IMapper mapper)
     {
         _repository = repositoryManager;
         _logger = logger;
@@ -29,7 +30,8 @@ public class ProductVariantService : IProductVariantService
         await CheckIfProductExistsAsync(productId, trackChanges: false);
 
         var productVariantEntities =
-            await _repository.ProductVariant.GetProductVariantsAsync(productId, productVariantParameters, trackChanges);
+            await _repository.ProductVariant.GetProductVariantsAsync(productId, productVariantParameters,
+                trackChanges);
 
         var productVariantDtos = _mapper.Map<IEnumerable<ProductVariantDto>>(productVariantEntities);
 
@@ -41,6 +43,23 @@ public class ProductVariantService : IProductVariantService
         await CheckIfProductExistsAsync(productId, trackChanges: false);
 
         var productVariantEntity = GetProductVariantIfExists(productId, productVariantId, trackChanges);
+
+        var productVariantDto = _mapper.Map<ProductVariantDto>(productVariantEntity);
+
+        return productVariantDto;
+    }
+
+    public async Task<ProductVariantDto> CreateProductVariantAsync(int productId,
+        ProductVariantForCreationDto productVariantForCreation)
+    {
+        await CheckIfProductExistsAsync(productId, trackChanges: false);
+        await CheckIfPictureExistsAsync(productVariantForCreation.PictureIds, trackChanges: false);
+
+        var productVariantEntity = _mapper.Map<ProductVariant>(productVariantForCreation);
+        productVariantEntity.ProductId = productId;
+
+        await _repository.ProductVariant.CreateProductVariantAsync(productVariantEntity);
+        await _repository.SaveAsync();
 
         var productVariantDto = _mapper.Map<ProductVariantDto>(productVariantEntity);
 
@@ -68,5 +87,18 @@ public class ProductVariantService : IProductVariantService
         }
 
         return productVariantEntity;
+    }
+
+    private async Task CheckIfPictureExistsAsync(IEnumerable<int> pictureIds, bool trackChanges)
+    {
+        foreach (var pictureId in pictureIds)
+        {
+            var pictureEntity = await _repository.Picture.GetPictureAsync(pictureId, trackChanges);
+
+            if (pictureEntity is null)
+            {
+                throw new PictureNotFoundException(pictureId);
+            }
+        }
     }
 }

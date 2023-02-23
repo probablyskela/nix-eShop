@@ -11,4 +11,5 @@ public interface IProductService
         bool trackChanges);
 
     Task<ProductDto> GetProductAsync(int productId, bool trackChanges);
+    Task<ProductDto> CreateProductAsync(ProductForCreationDto productForCreation);
 }

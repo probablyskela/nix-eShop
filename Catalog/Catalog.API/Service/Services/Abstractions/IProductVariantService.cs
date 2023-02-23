@@ -10,4 +10,5 @@ public interface IProductVariantService
         int productId, ProductVariantParameters productVariantParameters, bool trackChanges);
 
     Task<ProductVariantDto> GetProductVariantAsync(int productId, int productVariantId, bool trackChanges);
+    Task<ProductVariantDto> CreateProductVariantAsync(int productId, ProductVariantForCreationDto productVariantForCreation);
 }

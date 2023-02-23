@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Catalog.API.Exceptions.NotFoundExceptions;
+using Catalog.API.Repository;
 using Catalog.API.Repository.Abstractions;
 using Catalog.API.Service.Services.Abstractions;
+using Microsoft.EntityFrameworkCore;
 using Shared.Data.Dtos.ConsumerDtos;
 using Shared.Data.Entities;
 using Shared.Data.Requests.RequestFeatures.Parameters;
@@ -34,7 +36,19 @@ public class ConsumerService : IConsumerService
 
     public async Task<ConsumerDto> GetConsumerAsync(int consumerId, bool trackChanges)
     {
-        var consumerEntity = GetConsumerIfExistsAsync(consumerId, trackChanges);
+        var consumerEntity = await GetConsumerIfExistsAsync(consumerId, trackChanges);
+
+        var consumerDto = _mapper.Map<ConsumerDto>(consumerEntity);
+
+        return consumerDto;
+    }
+
+    public async Task<ConsumerDto> CreateConsumerAsync(ConsumerForCreationDto consumerForCreation)
+    {
+        var consumerEntity = _mapper.Map<Consumer>(consumerForCreation);
+
+        await _repository.Consumer.CreateConsumerAsync(consumerEntity);
+        await _repository.SaveAsync();
 
         var consumerDto = _mapper.Map<ConsumerDto>(consumerEntity);
 
