@@ -19,10 +19,6 @@ namespace Catalog.API.Migrations
                 incrementBy: 10);
 
             migrationBuilder.CreateSequence(
-                name: "catalog_picture_hilo",
-                incrementBy: 10);
-
-            migrationBuilder.CreateSequence(
                 name: "catalog_product_hilo",
                 incrementBy: 10);
 
@@ -55,25 +51,13 @@ namespace Catalog.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CatalogPicture",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false),
-                    PictureFileName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CatalogPicture", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "CatalogProduct",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false),
                     Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
-                    PictureId = table.Column<int>(type: "integer", nullable: false),
+                    PictureFileName = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     CategoryId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -83,12 +67,6 @@ namespace Catalog.API.Migrations
                         name: "FK_CatalogProduct_CatalogCategory_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "CatalogCategory",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CatalogProduct_CatalogPicture_PictureId",
-                        column: x => x.PictureId,
-                        principalTable: "CatalogPicture",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -139,24 +117,18 @@ namespace Catalog.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CatalogProductVariantCatalogPicture",
+                name: "CatalogProductVariantPictures",
                 columns: table => new
                 {
-                    PicturesId = table.Column<int>(type: "integer", nullable: false),
-                    ProductVariantsId = table.Column<int>(type: "integer", nullable: false)
+                    ProductVariantId = table.Column<int>(type: "integer", nullable: false),
+                    PictureFileName = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CatalogProductVariantCatalogPicture", x => new { x.PicturesId, x.ProductVariantsId });
+                    table.PrimaryKey("PK_CatalogProductVariantPictures", x => new { x.ProductVariantId, x.PictureFileName });
                     table.ForeignKey(
-                        name: "FK_CatalogProductVariantCatalogPicture_CatalogPicture_Pictures~",
-                        column: x => x.PicturesId,
-                        principalTable: "CatalogPicture",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CatalogProductVariantCatalogPicture_CatalogProductVariant_P~",
-                        column: x => x.ProductVariantsId,
+                        name: "FK_CatalogProductVariantPictures_CatalogProductVariant_Product~",
+                        column: x => x.ProductVariantId,
                         principalTable: "CatalogProductVariant",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -173,19 +145,9 @@ namespace Catalog.API.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CatalogProduct_PictureId",
-                table: "CatalogProduct",
-                column: "PictureId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_CatalogProductVariant_ProductId",
                 table: "CatalogProductVariant",
                 column: "ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CatalogProductVariantCatalogPicture_ProductVariantsId",
-                table: "CatalogProductVariantCatalogPicture",
-                column: "ProductVariantsId");
         }
 
         /// <inheritdoc />
@@ -195,7 +157,7 @@ namespace Catalog.API.Migrations
                 name: "CatalogConsumerCatalogProduct");
 
             migrationBuilder.DropTable(
-                name: "CatalogProductVariantCatalogPicture");
+                name: "CatalogProductVariantPictures");
 
             migrationBuilder.DropTable(
                 name: "CatalogConsumer");
@@ -209,17 +171,11 @@ namespace Catalog.API.Migrations
             migrationBuilder.DropTable(
                 name: "CatalogCategory");
 
-            migrationBuilder.DropTable(
-                name: "CatalogPicture");
-
             migrationBuilder.DropSequence(
                 name: "catalog_category_hilo");
 
             migrationBuilder.DropSequence(
                 name: "catalog_consumer_hilo");
-
-            migrationBuilder.DropSequence(
-                name: "catalog_picture_hilo");
 
             migrationBuilder.DropSequence(
                 name: "catalog_product_hilo");

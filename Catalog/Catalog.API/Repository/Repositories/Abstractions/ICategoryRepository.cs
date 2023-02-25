@@ -9,4 +9,5 @@ public interface ICategoryRepository
     Task<PagedList<Category>> GetCategoriesAsync(CategoryParameters productParameters, bool trackChanges);
     Task<Category?> GetCategoryAsync(int categoryId, bool trackChanges);
     Task CreateCategoryAsync(Category category);
+    void DeleteCategory(Category category);
 }

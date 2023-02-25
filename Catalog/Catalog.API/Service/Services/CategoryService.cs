@@ -54,6 +54,23 @@ public class CategoryService : ICategoryService
         return categoryDto;
     }
 
+    public async Task UpdateCategoryNameAsync(int categoryId, CategoryUpdateNameDto categoryUpdateNameDto)
+    {
+        var category = await GetCategoryIfExistsAsync(categoryId, trackChanges: true);
+
+        category.Name = categoryUpdateNameDto.Name;
+
+        await _repository.SaveAsync();
+    }
+
+    public async Task DeleteCategoryAsync(int categoryId, bool trackChanges)
+    {
+        var category = await GetCategoryIfExistsAsync(categoryId, trackChanges);
+
+        _repository.Category.DeleteCategory(category);
+        await _repository.SaveAsync();
+    }
+
     private async Task<Category> GetCategoryIfExistsAsync(int categoryId, bool trackChanges)
     {
         var categoryEntity = await _repository.Category.GetCategoryAsync(categoryId, trackChanges);

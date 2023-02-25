@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Catalog.API.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20230223125505_InitialCreate")]
+    [Migration("20230224113256_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -28,9 +28,6 @@ namespace Catalog.API.Migrations
                 .IncrementsBy(10);
 
             modelBuilder.HasSequence("catalog_consumer_hilo")
-                .IncrementsBy(10);
-
-            modelBuilder.HasSequence("catalog_picture_hilo")
                 .IncrementsBy(10);
 
             modelBuilder.HasSequence("catalog_product_hilo")
@@ -52,21 +49,6 @@ namespace Catalog.API.Migrations
                     b.HasIndex("ProductsId");
 
                     b.ToTable("CatalogConsumerCatalogProduct", (string)null);
-                });
-
-            modelBuilder.Entity("PictureProductVariant", b =>
-                {
-                    b.Property<int>("PicturesId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ProductVariantsId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("PicturesId", "ProductVariantsId");
-
-                    b.HasIndex("ProductVariantsId");
-
-                    b.ToTable("CatalogProductVariantCatalogPicture", (string)null);
                 });
 
             modelBuilder.Entity("Shared.Data.Entities.Category", b =>
@@ -105,24 +87,6 @@ namespace Catalog.API.Migrations
                     b.ToTable("CatalogConsumer", (string)null);
                 });
 
-            modelBuilder.Entity("Shared.Data.Entities.Picture", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "catalog_picture_hilo");
-
-                    b.Property<string>("PictureFileName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CatalogPicture", (string)null);
-                });
-
             modelBuilder.Entity("Shared.Data.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -144,14 +108,14 @@ namespace Catalog.API.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<int>("PictureId")
-                        .HasColumnType("integer");
+                    b.Property<string>("PictureFileName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("PictureId");
 
                     b.ToTable("CatalogProduct", (string)null);
                 });
@@ -185,6 +149,20 @@ namespace Catalog.API.Migrations
                     b.ToTable("CatalogProductVariant", (string)null);
                 });
 
+            modelBuilder.Entity("Shared.Data.Entities.ProductVariantPicture", b =>
+                {
+                    b.Property<int>("ProductVariantId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("PictureFileName")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.HasKey("ProductVariantId", "PictureFileName");
+
+                    b.ToTable("CatalogProductVariantPictures", (string)null);
+                });
+
             modelBuilder.Entity("ConsumerProduct", b =>
                 {
                     b.HasOne("Shared.Data.Entities.Consumer", null)
@@ -200,21 +178,6 @@ namespace Catalog.API.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("PictureProductVariant", b =>
-                {
-                    b.HasOne("Shared.Data.Entities.Picture", null)
-                        .WithMany()
-                        .HasForeignKey("PicturesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Shared.Data.Entities.ProductVariant", null)
-                        .WithMany()
-                        .HasForeignKey("ProductVariantsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Shared.Data.Entities.Product", b =>
                 {
                     b.HasOne("Shared.Data.Entities.Category", "Category")
@@ -223,15 +186,7 @@ namespace Catalog.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Shared.Data.Entities.Picture", "Picture")
-                        .WithMany()
-                        .HasForeignKey("PictureId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Category");
-
-                    b.Navigation("Picture");
                 });
 
             modelBuilder.Entity("Shared.Data.Entities.ProductVariant", b =>
@@ -245,6 +200,17 @@ namespace Catalog.API.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("Shared.Data.Entities.ProductVariantPicture", b =>
+                {
+                    b.HasOne("Shared.Data.Entities.ProductVariant", "ProductVariant")
+                        .WithMany("ProductVariantPicture")
+                        .HasForeignKey("ProductVariantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProductVariant");
+                });
+
             modelBuilder.Entity("Shared.Data.Entities.Category", b =>
                 {
                     b.Navigation("Products");
@@ -253,6 +219,11 @@ namespace Catalog.API.Migrations
             modelBuilder.Entity("Shared.Data.Entities.Product", b =>
                 {
                     b.Navigation("ProductVariants");
+                });
+
+            modelBuilder.Entity("Shared.Data.Entities.ProductVariant", b =>
+                {
+                    b.Navigation("ProductVariantPicture");
                 });
 #pragma warning restore 612, 618
         }

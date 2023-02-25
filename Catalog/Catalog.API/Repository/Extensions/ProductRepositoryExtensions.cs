@@ -19,15 +19,8 @@ public static class ProductRepositoryExtensions
             e.Name.ToLower().Contains(lowerCaseTrimmedTerm) || e.Description.ToLower().Contains(lowerCaseTrimmedTerm));
     }
 
-    public static IQueryable<Product> FilterConsumers(this IQueryable<Product> products, IEnumerable<string>? consumers)
+    public static IQueryable<Product> FilterConsumers(this IQueryable<Product> products, IEnumerable<int>? consumers)
     {
-        if (consumers is null)
-        {
-            return products;
-        }
-
-        var consumersString = string.Join(',', consumers).ToLowerInvariant();
-
-        return products.Where(p => p.Consumers.Any(c => consumersString.Contains(c.Name.ToLower())));
+        return consumers is null ? products : products.Where(p => p.Consumers.Any(c => consumers.Contains(c.Id)));
     }
 }

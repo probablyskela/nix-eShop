@@ -1,4 +1,5 @@
 using Catalog.API.Extensions;
+using Catalog.API.Mapping;
 using Catalog.API.Repository;
 using Catalog.API.Repository.Abstractions;
 using Catalog.API.Service;

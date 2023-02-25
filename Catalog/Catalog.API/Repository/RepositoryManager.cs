@@ -12,7 +12,7 @@ public sealed class RepositoryManager : IRepositoryManager
     private readonly Lazy<IProductRepository> _itemRepository;
     private readonly Lazy<ICategoryRepository> _categoryRepository;
     private readonly Lazy<IProductVariantRepository> _productVariantRepository;
-    private readonly Lazy<IPictureRepository> _pictureRepository;
+    private readonly Lazy<IProductVariantPictureRepository> _productVariantPictureRepository;
 
     public RepositoryManager(RepositoryContext repositoryContext)
     {
@@ -26,15 +26,15 @@ public sealed class RepositoryManager : IRepositoryManager
             new Lazy<ICategoryRepository>(() => new CategoryRepository(repositoryContext));
         _productVariantRepository =
             new Lazy<IProductVariantRepository>(() => new ProductVariantRepository(repositoryContext));
-        _pictureRepository =
-            new Lazy<IPictureRepository>(() => new PictureRepository(repositoryContext));
+        _productVariantPictureRepository =
+            new Lazy<IProductVariantPictureRepository>(() => new ProductVariantPictureRepository(repositoryContext));
     }
 
     public IConsumerRepository Consumer => _consumerRepository.Value;
     public ICategoryRepository Category => _categoryRepository.Value;
     public IProductRepository Product => _itemRepository.Value;
     public IProductVariantRepository ProductVariant => _productVariantRepository.Value;
-    public IPictureRepository Picture => _pictureRepository.Value;
+    public IProductVariantPictureRepository ProductVariantPicture => _productVariantPictureRepository.Value;
 
     public async Task SaveAsync()
     {

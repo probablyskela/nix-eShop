@@ -22,9 +22,9 @@ public class ProductEntityConfiguration : IEntityTypeConfiguration<Product>
             .IsRequired()
             .HasMaxLength(500);
 
-        builder.HasOne(c => c.Picture)
-            .WithMany()
-            .HasForeignKey(c => c.PictureId);
+        builder.Property(c => c.PictureFileName)
+            .IsRequired()
+            .HasMaxLength(128);
         
         builder.HasOne(c => c.Category)
             .WithMany(c => c.Products)

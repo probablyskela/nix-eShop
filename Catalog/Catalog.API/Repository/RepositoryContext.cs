@@ -15,7 +15,7 @@ public class RepositoryContext : DbContext
     public DbSet<Category>? Categories;
     public DbSet<Consumer>? Consumers;
     public DbSet<ProductVariant>? ProductVariants;
-    public DbSet<Picture>? Pictures;
+    public DbSet<ProductVariantPicture>? ProductVariantPictures;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -23,6 +23,6 @@ public class RepositoryContext : DbContext
         modelBuilder.ApplyConfiguration(new CategoryEntityConfiguration());
         modelBuilder.ApplyConfiguration(new ConsumerEntityConfiguration());
         modelBuilder.ApplyConfiguration(new ProductVariantEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new PictureEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new ProductVariantPictureEntityConfiguration());
     }
 }

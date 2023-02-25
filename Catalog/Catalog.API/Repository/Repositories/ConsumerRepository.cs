@@ -18,11 +18,17 @@ public class ConsumerRepository : RepositoryBase<Consumer>, IConsumerRepository
     public async Task<PagedList<Consumer>> GetConsumersAsync(ConsumerParameters consumerParameters, bool trackChanges)
     {
         var categories = FindAll(trackChanges)
-            .Sort(consumerParameters.OrderBy)
-            .Include(c => c.Products);
+            .Include(c => c.Products)
+            .Sort(consumerParameters.OrderBy);
 
         return await PagedList<Consumer>
             .ToPagedList(categories, consumerParameters.PageIndex, consumerParameters.PageSize);
+    }
+
+    public async Task<IEnumerable<Consumer>> GetConsumersByIdsAsync(IEnumerable<int> consumerIds, bool trackChanges)
+    {
+        return await FindByCondition(c => consumerIds.Contains(c.Id), trackChanges)
+            .ToListAsync();
     }
 
     public async Task<Consumer?> GetConsumerAsync(int consumerId, bool trackChanges)
@@ -35,5 +41,10 @@ public class ConsumerRepository : RepositoryBase<Consumer>, IConsumerRepository
     public async Task CreateConsumerAsync(Consumer consumer)
     {
         await CreateAsync(consumer);
+    }
+
+    public void DeleteConsumer(Consumer consumer)
+    {
+        Delete(consumer);
     }
 }

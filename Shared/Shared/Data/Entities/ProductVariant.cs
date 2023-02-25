@@ -8,5 +8,5 @@ public class ProductVariant
     public int AvailableStock { get; set; }
     public int ProductId { get; set; }
     public Product Product { get; set; } = null!;
-    public List<Picture> Pictures { get; set; } = null!;
+    public List<ProductVariantPicture> ProductVariantPictures { get; set; } = null!;
 }

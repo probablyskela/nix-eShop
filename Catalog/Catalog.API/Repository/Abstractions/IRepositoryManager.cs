@@ -8,6 +8,6 @@ public interface IRepositoryManager
     ICategoryRepository Category { get; }
     IProductRepository Product { get; }
     IProductVariantRepository ProductVariant { get; }
-    IPictureRepository Picture { get; }
+    IProductVariantPictureRepository ProductVariantPicture { get; }
     Task SaveAsync();
 }

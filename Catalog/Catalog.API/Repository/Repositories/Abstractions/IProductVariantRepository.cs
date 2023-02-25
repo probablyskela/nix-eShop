@@ -1,5 +1,4 @@
-﻿using Shared.Data.Dtos.ProductVariantDtos;
-using Shared.Data.Entities;
+﻿using Shared.Data.Entities;
 using Shared.Data.Requests.RequestFeatures.Parameters;
 using Shared.Misc;
 
@@ -12,4 +11,5 @@ public interface IProductVariantRepository
 
     Task<ProductVariant?> GetProductVariantAsync(int productId, int productVariantId, bool trackChanges);
     Task CreateProductVariantAsync(ProductVariant productVariant);
+    void DeleteProductVariant(ProductVariant productVariant);
 }

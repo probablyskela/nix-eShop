@@ -32,7 +32,6 @@ public static class ServiceExtensions
     public static void ConfigureServices(this IServiceCollection services)
     {
         services.AddScoped<IConsumerService, ConsumerService>();
-        services.AddScoped<IPictureService, PictureService>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IProductVariantService, ProductVariantService>();
         services.AddScoped<ICategoryService, CategoryService>();

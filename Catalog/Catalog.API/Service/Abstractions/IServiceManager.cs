@@ -8,5 +8,4 @@ public interface IServiceManager
     IProductService Product { get; }
     ICategoryService Category { get; }
     IProductVariantService ProductVariant { get; }
-    IPictureService Picture { get; }
 }

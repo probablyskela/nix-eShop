@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Catalog.API.Exceptions.BadRequestExceptions;
 using Catalog.API.Exceptions.NotFoundExceptions;
 using Catalog.API.Repository.Abstractions;
 using Catalog.API.Service.Services.Abstractions;
@@ -49,13 +50,16 @@ public class ProductService : IProductService
 
     public async Task<ProductDto> CreateProductAsync(ProductForCreationDto productForCreation)
     {
-        var productEntity = _mapper.Map<Product>(productForCreation);
-
-        await CheckIfCategoryExistsAsync(productForCreation.CategoryId, trackChanges: false);
-        await CheckIfPictureExistsAsync(productForCreation.PictureId, trackChanges: false);
+        await GetCategoryIfExists(productForCreation.CategoryId, trackChanges: false);
         await CheckIfConsumersExistAsync(productForCreation.ConsumerIds, trackChanges: false);
 
+        var productEntity = _mapper.Map<Product>(productForCreation);
+
         await _repository.Product.CreateProductAsync(productEntity);
+        await _repository.SaveAsync();
+
+        productEntity.Consumers =
+            (await _repository.Consumer.GetConsumersByIdsAsync(productForCreation.ConsumerIds, false)).ToList();
         await _repository.SaveAsync();
 
         var productDto = _mapper.Map<ProductDto>(productEntity);
@@ -63,29 +67,98 @@ public class ProductService : IProductService
         return productDto;
     }
 
+    public async Task UpdateProductNameAsync(int productId, ProductUpdateNameDto productUpdateNameDto)
+    {
+        var product = await GetProductIfExistsAsync(productId, trackChanges: true);
+
+        product.Name = productUpdateNameDto.Name;
+
+        await _repository.SaveAsync();
+    }
+
+    public async Task UpdateProductDescriptionAsync(int productId,
+        ProductUpdateDescriptionDto productUpdateDescriptionDto)
+    {
+        var product = await GetProductIfExistsAsync(productId, trackChanges: true);
+
+        product.Description = productUpdateDescriptionDto.Description;
+
+        await _repository.SaveAsync();
+    }
+
+    public async Task UpdateProductPictureFileNameAsync(int productId,
+        ProductUpdatePictureFileNameDto productUpdatePictureFileNameDto)
+    {
+        var product = await GetProductIfExistsAsync(productId, trackChanges: true);
+
+        product.PictureFileName = productUpdatePictureFileNameDto.PictureFileName;
+
+        await _repository.SaveAsync();
+    }
+
+    public async Task UpdateProductCategoryAsync(int productId, ProductUpdateCategoryDto productUpdateCategoryDto)
+    {
+        var category = await GetCategoryIfExists(productUpdateCategoryDto.CategoryId, trackChanges: false);
+        var product = await GetProductIfExistsAsync(productId, trackChanges: true);
+
+        product.CategoryId = productUpdateCategoryDto.CategoryId;
+        product.Category = category;
+
+        await _repository.SaveAsync();
+    }
+
+    public async Task UpdateProductAddConsumerAsync(int productId, ProductUpdateConsumerDto productUpdateConsumerDto)
+    {
+        var product = await GetProductIfExistsAsync(productId, trackChanges: true);
+        var consumer = await GetConsumerIfExistAsync(productUpdateConsumerDto.ConsumerId, false);
+
+        if (product.Consumers.Contains(consumer))
+        {
+            throw new ConsumerAlreadyAttachedBadRequestException(productId, productUpdateConsumerDto.ConsumerId);
+        }
+
+        product.Consumers.Add(consumer);
+
+        await _repository.SaveAsync();
+    }
+
+    public async Task UpdateProductRemoveConsumerAsync(int productId, ProductUpdateConsumerDto productUpdateConsumerDto)
+    {
+        var product = await GetProductIfExistsAsync(productId, trackChanges: true);
+
+        var consumer = product.Consumers.SingleOrDefault(c => c.Id.Equals(productUpdateConsumerDto.ConsumerId));
+
+        if (consumer is null)
+        {
+            throw new ConsumerNotAttachedBadRequestException(productId, productUpdateConsumerDto.ConsumerId);
+        }
+
+        product.Consumers.Remove(consumer);
+
+        await _repository.SaveAsync();
+    }
+
+    public async Task DeleteProductAsync(int productId, bool trackChanges)
+    {
+        var product = await GetProductIfExistsAsync(productId, trackChanges);
+
+        _repository.Product.DeleteProduct(product);
+        await _repository.SaveAsync();
+    }
+
     private async Task<Product> GetProductIfExistsAsync(int productId, bool trackChanges)
     {
         var productEntity = await _repository.Product.GetProductAsync(productId, trackChanges);
-        
+
         if (productEntity is null)
         {
             throw new ProductNotFoundException(productId);
         }
-        
+
         return productEntity;
     }
 
-    private async Task CheckIfPictureExistsAsync(int pictureId, bool trackChanges)
-    {
-        var pictureEntity = await _repository.Picture.GetPictureAsync(pictureId, trackChanges);
-
-        if (pictureEntity is null)
-        {
-            throw new PictureNotFoundException(pictureId);
-        }
-    }
-
-    private async Task CheckIfCategoryExistsAsync(int categoryId, bool trackChanges)
+    private async Task<Category> GetCategoryIfExists(int categoryId, bool trackChanges)
     {
         var categoryEntity = await _repository.Category.GetCategoryAsync(categoryId, trackChanges);
 
@@ -93,18 +166,27 @@ public class ProductService : IProductService
         {
             throw new CategoryNotFoundException(categoryId);
         }
+
+        return categoryEntity;
+    }
+
+    private async Task<Consumer> GetConsumerIfExistAsync(int consumerId, bool trackChanges)
+    {
+        var consumerEntity = await _repository.Consumer.GetConsumerAsync(consumerId, trackChanges);
+
+        if (consumerEntity is null)
+        {
+            throw new ConsumerNotFoundException(consumerId);
+        }
+
+        return consumerEntity;
     }
 
     private async Task CheckIfConsumersExistAsync(IEnumerable<int> consumerIds, bool trackChanges)
     {
         foreach (var consumerId in consumerIds)
         {
-            var consumerEntity = await _repository.Consumer.GetConsumerAsync(consumerId, trackChanges);
-
-            if (consumerEntity is null)
-            {
-                throw new ConsumerNotFoundException(consumerId);
-            }
+            await GetConsumerIfExistAsync(consumerId, trackChanges);
         }
     }
 }

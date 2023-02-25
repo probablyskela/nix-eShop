@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Catalog.API.Exceptions.BadRequestExceptions;
 using Catalog.API.Exceptions.NotFoundExceptions;
 using Catalog.API.Repository.Abstractions;
 using Catalog.API.Service.Services.Abstractions;
@@ -32,7 +33,6 @@ public class ProductVariantService : IProductVariantService
         var productVariantEntities =
             await _repository.ProductVariant.GetProductVariantsAsync(productId, productVariantParameters,
                 trackChanges);
-
         var productVariantDtos = _mapper.Map<IEnumerable<ProductVariantDto>>(productVariantEntities);
 
         return (productVariantDtos, productVariantEntities.MetaData);
@@ -42,7 +42,9 @@ public class ProductVariantService : IProductVariantService
     {
         await CheckIfProductExistsAsync(productId, trackChanges: false);
 
-        var productVariantEntity = GetProductVariantIfExists(productId, productVariantId, trackChanges);
+        var productVariantEntity = await GetProductVariantIfExistsAsync(productId, productVariantId, trackChanges);
+
+        _logger.LogError($"{productVariantEntity.ProductVariantPictures.Count}");
 
         var productVariantDto = _mapper.Map<ProductVariantDto>(productVariantEntity);
 
@@ -53,7 +55,6 @@ public class ProductVariantService : IProductVariantService
         ProductVariantForCreationDto productVariantForCreation)
     {
         await CheckIfProductExistsAsync(productId, trackChanges: false);
-        await CheckIfPictureExistsAsync(productVariantForCreation.PictureIds, trackChanges: false);
 
         var productVariantEntity = _mapper.Map<ProductVariant>(productVariantForCreation);
         productVariantEntity.ProductId = productId;
@@ -61,9 +62,106 @@ public class ProductVariantService : IProductVariantService
         await _repository.ProductVariant.CreateProductVariantAsync(productVariantEntity);
         await _repository.SaveAsync();
 
+        foreach (var pictureFileName in productVariantForCreation.PictureFileNames)
+        {
+            var productVariantPictureEntity = new ProductVariantPicture
+                { ProductVariantId = productVariantEntity.Id, PictureFileName = pictureFileName };
+
+            await _repository.ProductVariantPicture.CreateProductVariantPictureAsync(productVariantPictureEntity);
+        }
+
+        await _repository.SaveAsync();
+
         var productVariantDto = _mapper.Map<ProductVariantDto>(productVariantEntity);
 
         return productVariantDto;
+    }
+
+    public async Task UpdateProductVariantLabelAsync(int productId, int productVariantId,
+        ProductVariantUpdateLabelDto productVariantUpdateLabelDto)
+    {
+        await CheckIfProductExistsAsync(productId, false);
+        var productVariant = await GetProductVariantIfExistsAsync(productId, productVariantId, trackChanges: true);
+
+        productVariant.Label = productVariantUpdateLabelDto.Label;
+
+        await _repository.SaveAsync();
+    }
+
+    public async Task UpdateProductVariantPriceAsync(int productId, int productVariantId,
+        ProductVariantUpdatePriceDto productVariantUpdatePriceDto)
+    {
+        await CheckIfProductExistsAsync(productId, false);
+        var productVariant = await GetProductVariantIfExistsAsync(productId, productVariantId, trackChanges: true);
+
+        productVariant.Price = productVariantUpdatePriceDto.Price;
+
+        await _repository.SaveAsync();
+    }
+
+    public async Task UpdateProductVariantAvailableStockAsync(int productId, int productVariantId,
+        ProductVariantUpdateAvailableStockDto productVariantUpdateAvailableStockDto)
+    {
+        await CheckIfProductExistsAsync(productId, false);
+        var productVariant = await GetProductVariantIfExistsAsync(productId, productVariantId, trackChanges: true);
+
+        productVariant.AvailableStock = productVariantUpdateAvailableStockDto.AvailableStock;
+
+        await _repository.SaveAsync();
+    }
+
+    public async Task UpdateProductVariantAddPictureAsync(int productId, int productVariantId,
+        ProductVariantUpdatePictureFileNameDto productVariantUpdatePictureFileNameDto)
+    {
+        var productVariant = await GetProductVariantIfExistsAsync(productId, productVariantId, true);
+        var picture = productVariant.ProductVariantPictures
+            .SingleOrDefault(p => p.PictureFileName
+                .Equals(productVariantUpdatePictureFileNameDto.PictureFileName));
+
+        if (picture is not null)
+        {
+            throw new PictureAlreadyAttachedBadRequestException(productId, productVariantId,
+                productVariantUpdatePictureFileNameDto.PictureFileName);
+        }
+
+        var productVariantPictureEntity = new ProductVariantPicture
+        {
+            ProductVariantId = productVariant.Id,
+            PictureFileName = productVariantUpdatePictureFileNameDto.PictureFileName
+        };
+
+        await _repository.ProductVariantPicture.CreateProductVariantPictureAsync(productVariantPictureEntity);
+        await _repository.SaveAsync();
+
+        productVariant.ProductVariantPictures.Add(productVariantPictureEntity);
+        await _repository.SaveAsync();
+    }
+
+    public async Task UpdateProductVariantRemovePictureAsync(int productId, int productVariantId,
+        ProductVariantUpdatePictureFileNameDto productVariantUpdatePictureFileNameDto)
+    {
+        var productVariant = await GetProductVariantIfExistsAsync(productId, productVariantId, true);
+        var picture = productVariant.ProductVariantPictures
+            .SingleOrDefault(p => p.PictureFileName
+                .Equals(productVariantUpdatePictureFileNameDto.PictureFileName));
+
+        if (picture is null)
+        {
+            throw new PictureNotAttachedBadRequestException(productId, productVariantId,
+                productVariantUpdatePictureFileNameDto.PictureFileName);
+        }
+
+        productVariant.ProductVariantPictures.Remove(picture);
+        await _repository.SaveAsync();
+    }
+
+    public async Task DeleteProductVariant(int productId, int productVariantId, bool trackChanges)
+    {
+        await CheckIfProductExistsAsync(productId, trackChanges);
+        var productVariant = await GetProductVariantIfExistsAsync(productId, productVariantId, trackChanges);
+
+        _repository.ProductVariant.DeleteProductVariant(productVariant);
+        await _repository.SaveAsync();
     }
 
     private async Task CheckIfProductExistsAsync(int productId, bool trackChanges)
@@ -76,7 +174,8 @@ public class ProductVariantService : IProductVariantService
         }
     }
 
-    private async Task<ProductVariant> GetProductVariantIfExists(int productId, int productVariantId, bool trackChanges)
+    private async Task<ProductVariant> GetProductVariantIfExistsAsync(int productId, int productVariantId,
+        bool trackChanges)
     {
         var productVariantEntity =
             await _repository.ProductVariant.GetProductVariantAsync(productId, productVariantId, trackChanges);
@@ -87,18 +186,5 @@ public class ProductVariantService : IProductVariantService
         }
 
         return productVariantEntity;
-    }
-
-    private async Task CheckIfPictureExistsAsync(IEnumerable<int> pictureIds, bool trackChanges)
-    {
-        foreach (var pictureId in pictureIds)
-        {
-            var pictureEntity = await _repository.Picture.GetPictureAsync(pictureId, trackChanges);
-
-            if (pictureEntity is null)
-            {
-                throw new PictureNotFoundException(pictureId);
-            }
-        }
     }
 }

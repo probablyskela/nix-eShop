@@ -18,13 +18,12 @@ public class ProductRepository : RepositoryBase<Product>, IProductRepository
     public async Task<PagedList<Product>> GetProductsAsync(ProductParameters productParameters, bool trackChanges)
     {
         var products = FindAll(trackChanges)
-            .Search(productParameters.SearchTerm)
-            .FilterConsumers(productParameters.Consumers)
-            .Sort(productParameters.OrderBy)
             .Include(p => p.Category)
             .Include(p => p.Consumers)
-            .Include(p => p.Picture)
-            .Include(p => p.ProductVariants);
+            .Include(p => p.ProductVariants)
+            .Search(productParameters.SearchTerm)
+            .FilterConsumers(productParameters.ConsumerIds)
+            .Sort(productParameters.OrderBy);
 
         return await PagedList<Product>
             .ToPagedList(products, productParameters.PageIndex, productParameters.PageSize);
@@ -35,7 +34,6 @@ public class ProductRepository : RepositoryBase<Product>, IProductRepository
         return await FindByCondition(p => p.Id.Equals(productId), trackChanges)
             .Include(p => p.Category)
             .Include(p => p.Consumers)
-            .Include(p => p.Picture)
             .Include(p => p.ProductVariants)
             .SingleOrDefaultAsync();
     }
@@ -43,5 +41,10 @@ public class ProductRepository : RepositoryBase<Product>, IProductRepository
     public async Task CreateProductAsync(Product product)
     {
         await CreateAsync(product);
+    }
+
+    public void DeleteProduct(Product product)
+    {
+        Delete(product);
     }
 }

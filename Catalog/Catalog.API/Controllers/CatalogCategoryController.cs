@@ -17,7 +17,7 @@ public class CatalogCategoryController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateCategoryVariant([FromBody] CategoryForCreationDto categoryForCreation)
+    public async Task<IActionResult> CreateCategory([FromBody] CategoryForCreationDto categoryForCreation)
     {
         if (!ModelState.IsValid)
         {
@@ -27,5 +27,26 @@ public class CatalogCategoryController : ControllerBase
         var category = await _service.Category.CreateCategoryAsync(categoryForCreation);
 
         return Ok(category);
+    }
+
+    [HttpPost("{categoryId:int}")]
+    public async Task<IActionResult> UpdateCategoryName([FromRoute] int categoryId, [FromBody] CategoryUpdateNameDto categoryUpdateNameDto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return UnprocessableEntity(ModelState);
+        }
+
+        await _service.Category.UpdateCategoryNameAsync(categoryId, categoryUpdateNameDto);
+
+        return NoContent();
+    }
+
+    [HttpPost("{categoryId:int}")]
+    public async Task<IActionResult> DeleteCategory([FromRoute] int categoryId)
+    {
+        await _service.Category.DeleteCategoryAsync(categoryId, trackChanges: false);
+        
+        return NoContent();
     }
 }

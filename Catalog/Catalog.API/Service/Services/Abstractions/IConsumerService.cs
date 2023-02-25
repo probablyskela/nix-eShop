@@ -11,4 +11,6 @@ public interface IConsumerService
 
     Task<ConsumerDto> GetConsumerAsync(int consumerId, bool trackChanges);
     Task<ConsumerDto> CreateConsumerAsync(ConsumerForCreationDto consumerForCreation);
+    Task UpdateConsumerNameAsync(int consumerId, ConsumerUpdateNameDto consumerUpdateNameDto);
+    Task DeleteConsumerAsync(int consumerId, bool trackChanges);
 }

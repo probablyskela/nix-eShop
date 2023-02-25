@@ -16,5 +16,5 @@ public record ProductVariantForManipulationDto
     [Range(0, int.MaxValue, ErrorMessage = "Available stock is required and it can't be lower than 0.")]
     public int AvailableStock { get; set; }
 
-    public IEnumerable<int> PictureIds { get; set; } = null!;
+    public IEnumerable<string> PictureFileNames { get; set; } = null!;
 }

@@ -8,7 +8,9 @@ public interface ICategoryService
 {
     Task<(IEnumerable<CategoryDto> categoryDtos, MetaData metaData)> GetCategoriesAsync(
         CategoryParameters productParameters, bool trackChanges);
-    
+
     Task<CategoryDto> GetCategoryAsync(int categoryId, bool trackChanges);
     Task<CategoryDto> CreateCategoryAsync(CategoryForCreationDto categoryForCreation);
+    Task UpdateCategoryNameAsync(int categoryId, CategoryUpdateNameDto name);
+    Task DeleteCategoryAsync(int categoryId, bool trackChanges);
 }

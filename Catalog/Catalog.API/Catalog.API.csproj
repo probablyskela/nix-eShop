@@ -33,7 +33,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Exceptions\BadRequestExceptions" />
       <Folder Include="Migrations" />
     </ItemGroup>
 

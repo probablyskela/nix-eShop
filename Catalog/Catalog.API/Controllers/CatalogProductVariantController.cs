@@ -30,4 +30,92 @@ public class CatalogProductVariantController : ControllerBase
 
         return Ok(productVariant);
     }
+
+    [HttpPost("{productVariantId:int}")]
+    public async Task<IActionResult> UpdateProductVariantLabel([FromRoute] int productId,
+        [FromRoute] int productVariantId,
+        [FromBody] ProductVariantUpdateLabelDto productVariantUpdateLabelDto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return UnprocessableEntity(ModelState);
+        }
+
+        await _service.ProductVariant.UpdateProductVariantLabelAsync(productId, productVariantId,
+            productVariantUpdateLabelDto);
+
+        return NoContent();
+    }
+
+    [HttpPost("{productVariantId:int}")]
+    public async Task<IActionResult> UpdateProductVariantPrice([FromRoute] int productId,
+        [FromRoute] int productVariantId,
+        [FromBody] ProductVariantUpdatePriceDto productVariantUpdatePriceDto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return UnprocessableEntity(ModelState);
+        }
+
+        await _service.ProductVariant.UpdateProductVariantPriceAsync(productId, productVariantId,
+            productVariantUpdatePriceDto);
+
+        return NoContent();
+    }
+
+    [HttpPost("{productVariantId:int}")]
+    public async Task<IActionResult> UpdateProductVariantAvailableStock([FromRoute] int productId,
+        [FromRoute] int productVariantId,
+        [FromBody] ProductVariantUpdateAvailableStockDto productVariantUpdateAvailableStockDto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return UnprocessableEntity(ModelState);
+        }
+
+        await _service.ProductVariant.UpdateProductVariantAvailableStockAsync(productId, productVariantId,
+            productVariantUpdateAvailableStockDto);
+
+        return NoContent();
+    }
+
+    [HttpPost("{productVariantId:int}")]
+    public async Task<IActionResult> UpdateProductVariantAddPicture([FromRoute] int productId,
+        [FromRoute] int productVariantId,
+        [FromBody] ProductVariantUpdatePictureFileNameDto productVariantUpdatePictureFileNameDto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return UnprocessableEntity(ModelState);
+        }
+
+        await _service.ProductVariant.UpdateProductVariantAddPictureAsync(productId, productVariantId,
+            productVariantUpdatePictureFileNameDto);
+
+        return NoContent();
+    }
+
+    [HttpPost("{productVariantId:int}")]
+    public async Task<IActionResult> UpdateProductVariantRemovePicture([FromRoute] int productId,
+        [FromRoute] int productVariantId,
+        [FromBody] ProductVariantUpdatePictureFileNameDto productVariantUpdatePictureFileNameDto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return UnprocessableEntity(ModelState);
+        }
+
+        await _service.ProductVariant.UpdateProductVariantRemovePictureAsync(productId, productVariantId,
+            productVariantUpdatePictureFileNameDto);
+
+        return NoContent();
+    }
+
+    [HttpPost("{productVariantId:int}")]
+    public async Task<IActionResult> DeleteProductVariant([FromRoute] int productId, [FromRoute] int productVariantId)
+    {
+        await _service.ProductVariant.DeleteProductVariant(productId, productVariantId, trackChanges: false);
+
+        return NoContent();
+    }
 }

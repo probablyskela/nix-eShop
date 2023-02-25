@@ -17,7 +17,7 @@ public class CatalogConsumerController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateConsumerVariant([FromBody] ConsumerForCreationDto consumerForCreation)
+    public async Task<IActionResult> CreateConsumer([FromBody] ConsumerForCreationDto consumerForCreation)
     {
         if (!ModelState.IsValid)
         {
@@ -27,5 +27,26 @@ public class CatalogConsumerController : ControllerBase
         var consumer = await _service.Consumer.CreateConsumerAsync(consumerForCreation);
 
         return Ok(consumer);
+    }
+    
+    [HttpPost("{consumerId:int}")]
+    public async Task<IActionResult> UpdateCategoryName([FromRoute] int consumerId, [FromBody] ConsumerUpdateNameDto consumerUpdateName)
+    {
+        if (!ModelState.IsValid)
+        {
+            return UnprocessableEntity(ModelState);
+        }
+
+        await _service.Consumer.UpdateConsumerNameAsync(consumerId, consumerUpdateName);
+
+        return NoContent();
+    }
+    
+    [HttpPost("{consumerId:int}")]
+    public async Task<IActionResult> DeleteConsumer([FromRoute] int consumerId)
+    {
+        await _service.Consumer.DeleteConsumerAsync(consumerId, trackChanges: false);
+        
+        return NoContent();
     }
 }
