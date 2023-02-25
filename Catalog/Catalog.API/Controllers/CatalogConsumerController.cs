@@ -1,11 +1,15 @@
 ﻿using Catalog.API.Service.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 using Shared.Data.Dtos.ConsumerDtos;
+using Shared.Identity;
 
 namespace Catalog.API.Controllers;
 
 [ApiController]
+[Authorize(Policy = AuthPolicy.AllowClientPolicy)]
+[Scope("catalog.catalogConsumer")]
 [Route(ComponentDefaults.DefaultRoute + "/Consumers/[action]")]
 public class CatalogConsumerController : ControllerBase
 {

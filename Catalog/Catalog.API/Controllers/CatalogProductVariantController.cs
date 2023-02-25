@@ -1,11 +1,15 @@
 ﻿using Catalog.API.Service.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 using Shared.Data.Dtos.ProductVariantDtos;
+using Shared.Identity;
 
 namespace Catalog.API.Controllers;
 
 [ApiController]
+[Authorize(Policy = AuthPolicy.AllowClientPolicy)]
+[Scope("catalog.catalogProduct")]
 [Route(ComponentDefaults.DefaultRoute + "/Products/{productId:int}/ProductVariants/[action]")]
 public class CatalogProductVariantController : ControllerBase
 {

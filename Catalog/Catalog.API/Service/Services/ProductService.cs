@@ -36,6 +36,9 @@ public class ProductService : IProductService
                 p.Price > productParameters.MinPrice && p.Price < productParameters.MaxPrice);
         }
 
+        _logger.LogInformation(
+            $"Returned products on page: {productParameters.PageIndex} with {productParameters.PageSize} elements");
+
         return (productDtos, productEntities.MetaData);
     }
 
@@ -44,6 +47,8 @@ public class ProductService : IProductService
         var productEntity = await GetProductIfExistsAsync(productId, trackChanges);
 
         var productDto = _mapper.Map<ProductDto>(productEntity);
+
+        _logger.LogInformation($"Returned product with id: {productId}");
 
         return productDto;
     }
@@ -64,6 +69,8 @@ public class ProductService : IProductService
 
         var productDto = _mapper.Map<ProductDto>(productEntity);
 
+        _logger.LogInformation($"Created product with id: {productDto.Id}");
+
         return productDto;
     }
 
@@ -74,6 +81,8 @@ public class ProductService : IProductService
         product.Name = productUpdateNameDto.Name;
 
         await _repository.SaveAsync();
+
+        _logger.LogInformation($"Updated product with id: {productId} changed name to: {productUpdateNameDto.Name}");
     }
 
     public async Task UpdateProductDescriptionAsync(int productId,
@@ -84,6 +93,8 @@ public class ProductService : IProductService
         product.Description = productUpdateDescriptionDto.Description;
 
         await _repository.SaveAsync();
+
+        _logger.LogInformation($"Updated product with id: {productId} description");
     }
 
     public async Task UpdateProductPictureFileNameAsync(int productId,
@@ -94,6 +105,9 @@ public class ProductService : IProductService
         product.PictureFileName = productUpdatePictureFileNameDto.PictureFileName;
 
         await _repository.SaveAsync();
+
+        _logger.LogInformation(
+            $"Updated product with id: {productId} picture file name to {productUpdatePictureFileNameDto.PictureFileName}");
     }
 
     public async Task UpdateProductCategoryAsync(int productId, ProductUpdateCategoryDto productUpdateCategoryDto)
@@ -105,6 +119,9 @@ public class ProductService : IProductService
         product.Category = category;
 
         await _repository.SaveAsync();
+
+        _logger.LogInformation(
+            $"Updated product with id: {productId} changed category to category with id: {category.Id}");
     }
 
     public async Task UpdateProductAddConsumerAsync(int productId, ProductUpdateConsumerDto productUpdateConsumerDto)
@@ -120,6 +137,8 @@ public class ProductService : IProductService
         product.Consumers.Add(consumer);
 
         await _repository.SaveAsync();
+
+        _logger.LogInformation($"Updated product with id: {productId} added consumer with id: {consumer.Id}");
     }
 
     public async Task UpdateProductRemoveConsumerAsync(int productId, ProductUpdateConsumerDto productUpdateConsumerDto)
@@ -136,6 +155,8 @@ public class ProductService : IProductService
         product.Consumers.Remove(consumer);
 
         await _repository.SaveAsync();
+
+        _logger.LogInformation($"Updated product with id: {productId} removed consumer with id: {consumer.Id}");
     }
 
     public async Task DeleteProductAsync(int productId, bool trackChanges)
@@ -144,6 +165,8 @@ public class ProductService : IProductService
 
         _repository.Product.DeleteProduct(product);
         await _repository.SaveAsync();
+
+        _logger.LogInformation($"Deleted product with id: {productId}");
     }
 
     private async Task<Product> GetProductIfExistsAsync(int productId, bool trackChanges)

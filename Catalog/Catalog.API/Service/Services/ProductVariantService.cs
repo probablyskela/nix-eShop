@@ -35,6 +35,9 @@ public class ProductVariantService : IProductVariantService
                 trackChanges);
         var productVariantDtos = _mapper.Map<IEnumerable<ProductVariantDto>>(productVariantEntities);
 
+        _logger.LogInformation(
+            $"Returned product variants for product with id: {productId} on page: {productVariantParameters.PageIndex} with {productVariantParameters.PageSize} elements");
+
         return (productVariantDtos, productVariantEntities.MetaData);
     }
 
@@ -44,9 +47,10 @@ public class ProductVariantService : IProductVariantService
 
         var productVariantEntity = await GetProductVariantIfExistsAsync(productId, productVariantId, trackChanges);
 
-        _logger.LogError($"{productVariantEntity.ProductVariantPictures.Count}");
-
         var productVariantDto = _mapper.Map<ProductVariantDto>(productVariantEntity);
+
+        _logger.LogInformation(
+            $"Returned product variant with id: {productVariantId} for product with id: {productId}");
 
         return productVariantDto;
     }
@@ -74,6 +78,9 @@ public class ProductVariantService : IProductVariantService
 
         var productVariantDto = _mapper.Map<ProductVariantDto>(productVariantEntity);
 
+        _logger.LogInformation(
+            $"Created product variant with id: {productVariantDto.Id} for product with id: {productId}");
+
         return productVariantDto;
     }
 
@@ -86,6 +93,9 @@ public class ProductVariantService : IProductVariantService
         productVariant.Label = productVariantUpdateLabelDto.Label;
 
         await _repository.SaveAsync();
+
+        _logger.LogInformation(
+            $"Updated product variant with id: {productVariantId} for product with id: {productId} label to: {productVariantUpdateLabelDto.Label}");
     }
 
     public async Task UpdateProductVariantPriceAsync(int productId, int productVariantId,
@@ -97,6 +107,9 @@ public class ProductVariantService : IProductVariantService
         productVariant.Price = productVariantUpdatePriceDto.Price;
 
         await _repository.SaveAsync();
+
+        _logger.LogInformation(
+            $"Updated product variant with id: {productVariantId} for product with id: {productId} price to: {productVariantUpdatePriceDto.Price}");
     }
 
     public async Task UpdateProductVariantAvailableStockAsync(int productId, int productVariantId,
@@ -108,6 +121,9 @@ public class ProductVariantService : IProductVariantService
         productVariant.AvailableStock = productVariantUpdateAvailableStockDto.AvailableStock;
 
         await _repository.SaveAsync();
+
+        _logger.LogInformation(
+            $"Updated product variant with id: {productVariantId} for product with id: {productId} available stock to: {productVariantUpdateAvailableStockDto.AvailableStock}");
     }
 
     public async Task UpdateProductVariantAddPictureAsync(int productId, int productVariantId,
@@ -135,6 +151,9 @@ public class ProductVariantService : IProductVariantService
 
         productVariant.ProductVariantPictures.Add(productVariantPictureEntity);
         await _repository.SaveAsync();
+
+        _logger.LogInformation(
+            $"Updated product variant with id: {productVariantId} for product with id: {productId} added picture with name: {productVariantUpdatePictureFileNameDto.PictureFileName}");
     }
 
     public async Task UpdateProductVariantRemovePictureAsync(int productId, int productVariantId,
@@ -153,6 +172,9 @@ public class ProductVariantService : IProductVariantService
 
         productVariant.ProductVariantPictures.Remove(picture);
         await _repository.SaveAsync();
+
+        _logger.LogInformation(
+            $"Updated product variant with id: {productVariantId} for product with id: {productId} removed picture with name: {productVariantUpdatePictureFileNameDto.PictureFileName}");
     }
 
     public async Task DeleteProductVariant(int productId, int productVariantId, bool trackChanges)
@@ -162,6 +184,9 @@ public class ProductVariantService : IProductVariantService
 
         _repository.ProductVariant.DeleteProductVariant(productVariant);
         await _repository.SaveAsync();
+
+        _logger.LogInformation(
+            $"Deleted product variant with id: {productVariantId} for product with id: {productId}");
     }
 
     private async Task CheckIfProductExistsAsync(int productId, bool trackChanges)

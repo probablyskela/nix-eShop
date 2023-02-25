@@ -6,6 +6,7 @@ using Catalog.API.Service;
 using Catalog.API.Service.Abstractions;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.EntityFrameworkCore;
+using Shared.Extensions;
 
 var configuration = GetConfiguration();
 var builder = WebApplication.CreateBuilder(args);
@@ -19,11 +20,14 @@ builder.Services.AddSwaggerGen();
 builder.Services.ConfigureCors();
 builder.Services.ConfigureNpgsqlContext(configuration);
 builder.Services.ConfigureServices();
+builder.Services.ConfigureSwagger(configuration);
 
 builder.Services.AddScoped<IRepositoryManager, RepositoryManager>();
 builder.Services.AddScoped<IServiceManager, ServiceManager>();
 builder.Services.AddScoped<DbContext, RepositoryContext>();
 builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddAuthorization(configuration);
+
 
 builder.Services.AddControllers(options =>
 {
@@ -39,13 +43,21 @@ app.ConfigureExceptionHandler(logger);
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(setup =>
+    {
+        setup.SwaggerEndpoint($"{configuration["PathBase"]}/swagger/v1/swagger.json", "Catalog.API V1");
+        setup.OAuthClientId("catalogswaggerui");
+        setup.OAuthAppName("Catalog Swagger UI");
+    });
 }
 
 // app.UseHttpsRedirection();
 
+app.UseRouting();
+
 app.UseCors("CorsPolicy");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -1,11 +1,15 @@
 ﻿using Catalog.API.Service.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 using Shared.Data.Dtos.CategoryDto;
+using Shared.Identity;
 
 namespace Catalog.API.Controllers;
 
 [ApiController]
+[Authorize(Policy = AuthPolicy.AllowClientPolicy)]
+[Scope("catalog.catalogCategory")]
 [Route(ComponentDefaults.DefaultRoute + "/Categories/[action]")]
 public class CatalogCategoryController : ControllerBase
 {

@@ -29,6 +29,9 @@ public class ConsumerService : IConsumerService
 
         var consumerDtos = _mapper.Map<IEnumerable<ConsumerDto>>(consumerEntities);
 
+        _logger.LogInformation(
+            $"Returned consumers on page: {consumerParameters.PageIndex} with {consumerParameters.PageSize} elements");
+
         return (consumerDtos, consumerEntities.MetaData);
     }
 
@@ -37,6 +40,8 @@ public class ConsumerService : IConsumerService
         var consumerEntity = await GetConsumerIfExistsAsync(consumerId, trackChanges);
 
         var consumerDto = _mapper.Map<ConsumerDto>(consumerEntity);
+
+        _logger.LogInformation($"Returned consumer with id: {consumerId}");
 
         return consumerDto;
     }
@@ -50,6 +55,8 @@ public class ConsumerService : IConsumerService
 
         var consumerDto = _mapper.Map<ConsumerDto>(consumerEntity);
 
+        _logger.LogInformation($"Created consumer with id: {consumerDto.Id}");
+
         return consumerDto;
     }
 
@@ -58,6 +65,8 @@ public class ConsumerService : IConsumerService
         var consumer = await GetConsumerIfExistsAsync(consumerId, trackChanges: true);
 
         consumer.Name = consumerUpdateNameDto.Name;
+
+        _logger.LogInformation($"Updated consumer name with id: {consumerId}");
 
         await _repository.SaveAsync();
     }
@@ -68,6 +77,8 @@ public class ConsumerService : IConsumerService
 
         _repository.Consumer.DeleteConsumer(consumer);
         await _repository.SaveAsync();
+
+        _logger.LogInformation($"Deleted consumer with id: {consumerId}");
     }
 
     private async Task<Consumer> GetConsumerIfExistsAsync(int consumerId, bool trackChanges)

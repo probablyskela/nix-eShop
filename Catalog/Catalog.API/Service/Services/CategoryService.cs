@@ -24,11 +24,14 @@ public class CategoryService : ICategoryService
     }
 
     public async Task<(IEnumerable<CategoryDto> categoryDtos, MetaData metaData)> GetCategoriesAsync(
-        CategoryParameters productParameters, bool trackChanges)
+        CategoryParameters categoryParameters, bool trackChanges)
     {
-        var categoryEntities = await _repository.Category.GetCategoriesAsync(productParameters, trackChanges);
+        var categoryEntities = await _repository.Category.GetCategoriesAsync(categoryParameters, trackChanges);
 
         var categoryDtos = _mapper.Map<IEnumerable<CategoryDto>>(categoryEntities);
+
+        _logger.LogInformation(
+            $"Returned categories on page: {categoryParameters.PageIndex} with {categoryParameters.PageSize} elements");
 
         return (categoryDtos, categoryEntities.MetaData);
     }
@@ -38,6 +41,8 @@ public class CategoryService : ICategoryService
         var categoryEntity = await GetCategoryIfExistsAsync(categoryId, trackChanges);
 
         var categoryDto = _mapper.Map<CategoryDto>(categoryEntity);
+
+        _logger.LogInformation($"Returned category with id: {categoryId}");
 
         return categoryDto;
     }
@@ -51,6 +56,8 @@ public class CategoryService : ICategoryService
 
         var categoryDto = _mapper.Map<CategoryDto>(categoryEntity);
 
+        _logger.LogInformation($"Created category with id: {categoryDto.Id}");
+
         return categoryDto;
     }
 
@@ -59,6 +66,8 @@ public class CategoryService : ICategoryService
         var category = await GetCategoryIfExistsAsync(categoryId, trackChanges: true);
 
         category.Name = categoryUpdateNameDto.Name;
+
+        _logger.LogInformation($"Updated category name with id: {categoryId}");
 
         await _repository.SaveAsync();
     }
@@ -69,6 +78,8 @@ public class CategoryService : ICategoryService
 
         _repository.Category.DeleteCategory(category);
         await _repository.SaveAsync();
+
+        _logger.LogInformation($"Deleted category with id: {categoryId}");
     }
 
     private async Task<Category> GetCategoryIfExistsAsync(int categoryId, bool trackChanges)

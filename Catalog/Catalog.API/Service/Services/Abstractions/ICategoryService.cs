@@ -7,7 +7,7 @@ namespace Catalog.API.Service.Services.Abstractions;
 public interface ICategoryService
 {
     Task<(IEnumerable<CategoryDto> categoryDtos, MetaData metaData)> GetCategoriesAsync(
-        CategoryParameters productParameters, bool trackChanges);
+        CategoryParameters categoryParameters, bool trackChanges);
 
     Task<CategoryDto> GetCategoryAsync(int categoryId, bool trackChanges);
     Task<CategoryDto> CreateCategoryAsync(CategoryForCreationDto categoryForCreation);

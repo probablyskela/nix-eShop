@@ -13,6 +13,17 @@ services:
       - postgres
     ports:
       - 5000:5000
+  identityserver:
+    build:
+      context: .
+      dockerfile: IdentityServer/IdentityServer/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5001
+      - MvcUrl=http://www.alevelwebsite.com 
+      - CatalogApi=http://www.alevelwebsite.com:5000
+    ports:
+      - 5001:5001
   pgadmin4:
     image: dpage/pgadmin4
     environment:
@@ -35,3 +46,13 @@ services:
     volumes:
       - ./Proxy/gateway/nginx/conf.d:/etc/nginx/conf.d
       - ./Proxy/assets:/var/www/assets
+networks:
+  default:
+    driver: bridge
+    internal: false
+    attachable: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.0.0/24
+          gateway: 192.168.0.1

@@ -1,4 +1,5 @@
 ﻿using Catalog.API.Service.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 using Shared.Data.Dtos.CategoryDto;
@@ -7,10 +8,12 @@ using Shared.Data.Dtos.ProductDtos;
 using Shared.Data.Dtos.ProductVariantDtos;
 using Shared.Data.Requests.RequestFeatures.Parameters;
 using Shared.Data.Responses;
+using Shared.Identity;
 
 namespace Catalog.API.Controllers;
 
 [ApiController]
+[Authorize(Policy = AuthPolicy.AllowEndUserPolicy)]
 [Route(ComponentDefaults.DefaultRoute + "/[controller]")]
 public class CatalogBffController : ControllerBase
 {
