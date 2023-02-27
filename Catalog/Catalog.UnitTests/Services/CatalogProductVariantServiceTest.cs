@@ -307,7 +307,195 @@ public class CatalogProductVariantServiceTest
         // assert
         await act.Should().ThrowAsync<NullReferenceException>();
     }
+    
+    [Fact]
+    public async Task UpdateProductVariantPrice_Success()
+    {
+        // arrange  
+        var productId = 1;
+        var productVariantId = 1;
 
+        var productVariantUpdatePriceDto = new ProductVariantUpdatePriceDto
+        {
+            Price = 0
+        };
+
+        // act
+        Func<Task> act = async () =>
+        {
+            await _productVariantService.UpdateProductVariantPriceAsync(productId, productVariantId,
+                productVariantUpdatePriceDto);
+        };
+        // assert
+        act.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task UpdateProductVariantPrice_Failed()
+    {
+        // arrange  
+        var productId = 1;
+        var productVariantId = 1;
+
+        var productVariantUpdatePriceDto = new ProductVariantUpdatePriceDto
+        {
+            Price = 0
+        };
+
+        _repository.Setup(s => s.SaveAsync())
+            .Throws(new InvalidOperationException());
+
+        // act
+        Func<Task> act = async () =>
+        {
+            await _productVariantService.UpdateProductVariantPriceAsync(productId, productVariantId,
+                productVariantUpdatePriceDto);
+        };
+        // assert
+        await act.Should().ThrowAsync<NullReferenceException>();
+    }
+
+    [Fact]
+    public async Task UpdateProductVariantAvailableStockAsync_Success()
+    {
+        // arrange  
+        var productId = 1;
+        var productVariantId = 1;
+
+        var productVariantUpdateAvailableStockDto = new ProductVariantUpdateAvailableStockDto
+        {
+            AvailableStock= 0
+        };
+
+        // act
+        Func<Task> act = async () =>
+        {
+            await _productVariantService.UpdateProductVariantAvailableStockAsync(productId, productVariantId,
+                productVariantUpdateAvailableStockDto);
+        };
+        // assert
+        act.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task UpdateProductVariantAvailableStockAsync_Failed()
+    {
+        // arrange  
+        var productId = 1;
+        var productVariantId = 1;
+
+        var productVariantUpdateAvailableStockDto = new ProductVariantUpdateAvailableStockDto
+        {
+            AvailableStock= 0
+        };
+
+        _repository.Setup(s => s.SaveAsync())
+            .Throws(new InvalidOperationException());
+
+        // act
+        Func<Task> act = async () =>
+        {
+            await _productVariantService.UpdateProductVariantAvailableStockAsync(productId, productVariantId,
+                productVariantUpdateAvailableStockDto);
+        };
+        // assert
+        await act.Should().ThrowAsync<NullReferenceException>();
+    }
+    
+    [Fact]
+    public async Task UpdateProductVariantAddPictureAsync_Success()
+    {
+        // arrange  
+        var productId = 1;
+        var productVariantId = 1;
+
+        var productVariantUpdatePictureFileNameDto = new ProductVariantUpdatePictureFileNameDto
+        {
+            PictureFileName = "1.png"
+        };
+
+        // act
+        Func<Task> act = async () =>
+        {
+            await _productVariantService.UpdateProductVariantAddPictureAsync(productId, productVariantId,
+                productVariantUpdatePictureFileNameDto);
+        };
+        // assert
+        act.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task UpdateProductVariantAddPictureAsync_Failed()
+    {
+        // arrange  
+        var productId = 1;
+        var productVariantId = 1;
+
+        var productVariantUpdatePictureFileNameDto = new ProductVariantUpdatePictureFileNameDto
+        {
+            PictureFileName = "1.png"
+        };
+
+        _repository.Setup(s => s.SaveAsync())
+            .Throws(new InvalidOperationException());
+
+        // act
+        Func<Task> act = async () =>
+        {
+            await _productVariantService.UpdateProductVariantAddPictureAsync(productId, productVariantId,
+                productVariantUpdatePictureFileNameDto);
+        };
+        // assert
+        await act.Should().ThrowAsync<NullReferenceException>();
+    }
+    
+    [Fact]
+    public async Task UpdateProductVariantRemovePictureAsync_Success()
+    {
+        // arrange  
+        var productId = 1;
+        var productVariantId = 1;
+
+        var productVariantUpdatePictureFileNameDto = new ProductVariantUpdatePictureFileNameDto
+        {
+            PictureFileName = "1.png"
+        };
+
+        // act
+        Func<Task> act = async () =>
+        {
+            await _productVariantService.UpdateProductVariantRemovePictureAsync(productId, productVariantId,
+                productVariantUpdatePictureFileNameDto);
+        };
+        // assert
+        act.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task UpdateProductVariantRemovePictureAsync_Failed()
+    {
+        // arrange  
+        var productId = 1;
+        var productVariantId = 1;
+
+        var productVariantUpdatePictureFileNameDto = new ProductVariantUpdatePictureFileNameDto
+        {
+            PictureFileName = "1.png"
+        };
+
+        _repository.Setup(s => s.SaveAsync())
+            .Throws(new InvalidOperationException());
+
+        // act
+        Func<Task> act = async () =>
+        {
+            await _productVariantService.UpdateProductVariantRemovePictureAsync(productId, productVariantId,
+                productVariantUpdatePictureFileNameDto);
+        };
+        // assert
+        await act.Should().ThrowAsync<NullReferenceException>();
+    }
+    
     [Fact]
     public async Task DeleteProductVariantAsync_Success()
     {
