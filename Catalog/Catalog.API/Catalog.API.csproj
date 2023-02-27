@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.2" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.3">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.3">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+        <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.25" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Shared\Shared\Shared.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Migrations" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Microsoft.AspNetCore.Authorization">
+        <HintPath>..\..\..\..\.nuget\packages\microsoft.aspnetcore.app.ref\3.1.10\ref\netcoreapp3.1\Microsoft.AspNetCore.Authorization.dll</HintPath>
+      </Reference>
+      <Reference Include="Microsoft.AspNetCore.Mvc.Core">
+        <HintPath>..\..\..\..\.nuget\packages\microsoft.aspnetcore.app.ref\3.1.10\ref\netcoreapp3.1\Microsoft.AspNetCore.Mvc.Core.dll</HintPath>
+      </Reference>
+      <Reference Include="Microsoft.AspNetCore.Routing">
+        <HintPath>..\..\..\..\.nuget\packages\microsoft.aspnetcore.app.ref\3.1.10\ref\netcoreapp3.1\Microsoft.AspNetCore.Routing.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>
