@@ -118,7 +118,7 @@ public class CatalogProductVariantController : ControllerBase
     [HttpPost("{productVariantId:int}")]
     public async Task<IActionResult> DeleteProductVariant([FromRoute] int productId, [FromRoute] int productVariantId)
     {
-        await _service.ProductVariant.DeleteProductVariant(productId, productVariantId, trackChanges: false);
+        await _service.ProductVariant.DeleteProductVariantAsync(productId, productVariantId, trackChanges: false);
 
         return NoContent();
     }

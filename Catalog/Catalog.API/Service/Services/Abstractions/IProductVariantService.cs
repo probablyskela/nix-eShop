@@ -29,5 +29,5 @@ public interface IProductVariantService
     Task UpdateProductVariantRemovePictureAsync(int productId, int productVariantId,
         ProductVariantUpdatePictureFileNameDto productVariantUpdatePictureFileNameDto);
 
-    Task DeleteProductVariant(int productId, int productVariantId, bool trackChanges);
+    Task DeleteProductVariantAsync(int productId, int productVariantId, bool trackChanges);
 }

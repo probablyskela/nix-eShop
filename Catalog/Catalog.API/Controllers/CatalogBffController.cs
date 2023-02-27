@@ -1,6 +1,7 @@
 ﻿using Catalog.API.Service.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Shared;
 using Shared.Data.Dtos.CategoryDto;
 using Shared.Data.Dtos.ConsumerDtos;

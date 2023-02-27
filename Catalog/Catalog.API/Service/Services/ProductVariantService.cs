@@ -177,7 +177,7 @@ public class ProductVariantService : IProductVariantService
             $"Updated product variant with id: {productVariantId} for product with id: {productId} removed picture with name: {productVariantUpdatePictureFileNameDto.PictureFileName}");
     }
 
-    public async Task DeleteProductVariant(int productId, int productVariantId, bool trackChanges)
+    public async Task DeleteProductVariantAsync(int productId, int productVariantId, bool trackChanges)
     {
         await CheckIfProductExistsAsync(productId, trackChanges);
         var productVariant = await GetProductVariantIfExistsAsync(productId, productVariantId, trackChanges);
